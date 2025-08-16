@@ -133,7 +133,7 @@ jobs:
         Write-Host "Downloading Chrome++..." -ForegroundColor Yellow
         (New-Object System.Net.WebClient).DownloadFile($chromePlusDownloadUrl, "$tempDir\setdll.7z")
         (New-Object System.Net.WebClient).DownloadFile("https://www.7-zip.org/a/7zr.exe", "$tempDir\7zr.exe")
-        (New-Object System.Net.WebClient).DownloadFile("https://raw.githubusercontent.com/bibicadotnet/coccoc-portable/refs/heads/main/chrome%2B%2B.ini", "$tempDir\chrome++.ini")
+        (New-Object System.Net.WebClient).DownloadFile("https://raw.githubusercontent.com/bibicadotnet/coccoc-portable/refs/heads/main/chrome%2B%2B.ini", "$applicationPath\chrome++.ini")
         
         # Extract Chrome++
         Write-Host "Extracting Chrome++..." -ForegroundColor Yellow
@@ -141,24 +141,24 @@ jobs:
         $chromePlusExtractDir = "$tempDir\chromeplus"
         & $sevenZPath x "$tempDir\setdll.7z" "-o$chromePlusExtractDir" -y | Out-Null
         
+        # Copy Chrome++ files to Application
+        Write-Host "Installing Chrome++..." -ForegroundColor Yellow
+        Copy-Item "$chromePlusExtractDir\setdll-x64.exe" "$applicationPath\setdll-x64.exe" -Force
+        Copy-Item "$chromePlusExtractDir\version-x64.dll" "$applicationPath\version.dll" -Force
+        
+        # Apply Chrome++
+        Write-Host "Applying Chrome++..." -ForegroundColor Yellow
+        Push-Location $applicationPath
+        & ".\setdll-x64.exe" /d:version.dll browser.exe | Out-Null
+        Pop-Location
+        
         # Copy CocCoc files to portable directory
         Write-Host "Copying CocCoc files..." -ForegroundColor Yellow
         Copy-Item "$applicationPath\*" $portablePath -Recurse -Force
         
-        # Copy Chrome++ files
-        Write-Host "Installing Chrome++..." -ForegroundColor Yellow
-        Copy-Item "$chromePlusExtractDir\setdll-x64.exe" "$portablePath\setdll-x64.exe" -Force
-        Copy-Item "$chromePlusExtractDir\version-x64.dll" "$portablePath\version.dll" -Force
-        Copy-Item "$tempDir\chrome++.ini" "$portablePath\chrome++.ini" -Force
-        
-        # Apply Chrome++
-        Write-Host "Applying Chrome++..." -ForegroundColor Yellow
-        Push-Location $portablePath
-        & ".\setdll-x64.exe" /d:version.dll browser.exe | Out-Null
-        Pop-Location
-        
         # Cleanup temp files and Chrome++ installer files
         Remove-Item $tempDir -Recurse -Force
+        Remove-Item "$applicationPath\setdll-x64.exe", "$applicationPath\browser.exe~" -Force -ErrorAction SilentlyContinue
         Remove-Item "$portablePath\setdll-x64.exe", "$portablePath\browser.exe~" -Force -ErrorAction SilentlyContinue
         
         Write-Host "Build completed!" -ForegroundColor Green
@@ -169,9 +169,9 @@ jobs:
       run: |
         $releaseTag = "${{ steps.check-release.outputs.RELEASE_TAG }}"
         $zipPath = "$env:GITHUB_WORKSPACE\$releaseTag.zip"
-        $sourcePath = "$env:GITHUB_WORKSPACE"
+        $sourcePath = "$env:GITHUB_WORKSPACE\CocCoc_Portable"
         
-        Compress-Archive -Path "$sourcePath\*" -DestinationPath $zipPath -CompressionLevel Optimal
+        Compress-Archive -Path $sourcePath -DestinationPath $zipPath -CompressionLevel Optimal
         Write-Host "Created archive: $zipPath"
         
         # Set output for next step
