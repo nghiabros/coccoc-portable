@@ -169,7 +169,7 @@ jobs:
       run: |
         $releaseTag = "${{ steps.check-release.outputs.RELEASE_TAG }}"
         $zipPath = "$env:GITHUB_WORKSPACE\$releaseTag.zip"
-        $sourcePath = "$env:GITHUB_WORKSPACE\CocCoc_Portable"
+        $sourcePath = "$env:GITHUB_WORKSPACE"
         
         Compress-Archive -Path "$sourcePath\*" -DestinationPath $zipPath -CompressionLevel Optimal
         Write-Host "Created archive: $zipPath"
