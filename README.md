@@ -47,6 +47,13 @@ Bạn nào muốn Cốc Cốc sạch sẽ hơn, bật chạy `debloat.reg` thủ
 
 ---
 
+### Phiên bản mới???
+<p align="center">
+<img src="https://img.bibica.net/Koy2oGJn.png" alt="Koy2oGJn">
+</p>
+
+Cốc Cốc không thấy hỗ trợ download bản cũ, trừ vào 'coccoc://version/` xem phiên bản, còn lại không biết họ đặt tên phiên bản ở chỗ nào, nên dùng theo tên ở phiên bản hiển thị ở thư mục và tên file làm tên phiên bản portable
+
 ### Fork dự án
 
 Bạn nào muốn cài đặt, mà hơi rén, không rõ tác giả có chỉnh sửa, cài đặt gì thêm vào không, có thể [fork](https://github.com/bibicadotnet/coccoc-portable/fork) dự án, bật chạy `Actions`, nó sẽ tự chạy mọi quá trình, thời gian build tầm 2 phút là xong, tự download release từ trang cá nhân về dùng cho an tâm
