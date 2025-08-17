@@ -149,6 +149,9 @@ jobs:
         (New-Object System.Net.WebClient).DownloadFile("https://www.7-zip.org/a/7zr.exe", "$tempDir\7zr.exe")
         (New-Object System.Net.WebClient).DownloadFile("https://raw.githubusercontent.com/bibicadotnet/coccoc-portable/refs/heads/main/chrome%2B%2B.ini", "$applicationPath\chrome++.ini")
         (New-Object System.Net.WebClient).DownloadFile("https://raw.githubusercontent.com/bibicadotnet/coccoc-portable/refs/heads/main/update.bat", "$applicationPath\update.bat")
+        (New-Object System.Net.WebClient).DownloadFile("https://raw.githubusercontent.com/bibicadotnet/coccoc-portable/refs/heads/main/debloat.reg", "$applicationPath\debloat.reg")
+        (New-Object System.Net.WebClient).DownloadFile("https://raw.githubusercontent.com/bibicadotnet/coccoc-portable/refs/heads/main/default-apps-multi-profile.bat", "$applicationPath\default-apps-multi-profile.bat")
+
 
         # Extract Chrome++
         Write-Host "Extracting Chrome++..." -ForegroundColor Yellow
