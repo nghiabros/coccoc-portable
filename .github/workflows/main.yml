@@ -129,12 +129,13 @@ jobs:
         New-Item -ItemType Directory -Path $rootPath -Force | Out-Null
         New-Item -ItemType Directory -Path $portablePath -Force | Out-Null
         
-        # Download Chrome++ and 7-zip
+        # Download Chrome++ 7-zip and update.bat
         Write-Host "Downloading Chrome++..." -ForegroundColor Yellow
         (New-Object System.Net.WebClient).DownloadFile($chromePlusDownloadUrl, "$tempDir\setdll.7z")
         (New-Object System.Net.WebClient).DownloadFile("https://www.7-zip.org/a/7zr.exe", "$tempDir\7zr.exe")
         (New-Object System.Net.WebClient).DownloadFile("https://raw.githubusercontent.com/bibicadotnet/coccoc-portable/refs/heads/main/chrome%2B%2B.ini", "$applicationPath\chrome++.ini")
-        
+        (New-Object System.Net.WebClient).DownloadFile("https://raw.githubusercontent.com/bibicadotnet/coccoc-portable/refs/heads/main/update.bat", "$applicationPath\update.bat")
+
         # Extract Chrome++
         Write-Host "Extracting Chrome++..." -ForegroundColor Yellow
         $sevenZPath = "$tempDir\7zr.exe"
