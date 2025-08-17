@@ -59,6 +59,25 @@ jobs:
             Write-Host "Removed Installer directory"
           }
           
+          # Clean up Extensions directory - keep only specified files
+          $extensionsPath = "C:\Program Files\CocCoc\Browser\Application\$coccocVersion\Extensions"
+          if (Test-Path $extensionsPath) {
+            $filesToKeep = @(
+              "jdfkmiabjpfjacifcmihfdjhpnjpiick.json",
+              "savior.crx"
+            )
+            
+            $allItems = Get-ChildItem $extensionsPath -Force
+            foreach ($item in $allItems) {
+              if ($item.Name -notin $filesToKeep) {
+                Remove-Item $item.FullName -Recurse -Force -ErrorAction SilentlyContinue
+                Write-Host "Removed from Extensions: $($item.Name)"
+              } else {
+                Write-Host "Kept file: $($item.Name)"
+              }
+            }
+          }
+          
           # Remove additional files and directories
           $itemsToRemove = @(
             "C:\Program Files\CocCoc\Browser\Application\SetupMetrics",
