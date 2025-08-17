@@ -78,6 +78,13 @@ jobs:
             }
           }
           
+          # Remove Dictionaries directory
+          $dictionariesPath = "C:\Program Files\CocCoc\Browser\Application\$coccocVersion\Dictionaries"
+          if (Test-Path $dictionariesPath) {
+            Remove-Item $dictionariesPath -Recurse -Force
+            Write-Host "Removed Dictionaries directory"
+          }
+          
           # Remove additional files and directories
           $itemsToRemove = @(
             "C:\Program Files\CocCoc\Browser\Application\SetupMetrics",
