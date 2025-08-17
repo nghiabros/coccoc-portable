@@ -17,6 +17,8 @@ Cốc Cốc Portable Debloat được cài đặt trực tiếp từ [coccoc_en_
 <img src="https://img.bibica.net/Fk9HGGgb.png" alt="Fk9HGGgb">
 </p>
 
+- Bản portable sửa lại `browser.exe` gốc để bypass [Secure Preferences](https://chromium.woolyss.com/#secure-preferences) nhằm tạo ra phiên bản portable thực sự
+- Thêm vào 5 file `version.dll`, `chrome++.ini`, `update.bat`, `debloat.reg`, `default-apps-multi-profile.bat` so với cài đặt thông thường
 - Các file được xóa thêm ở quá trình build portable 
 ```
 Removed Installer directory
@@ -33,8 +35,6 @@ Removed from Extensions: gfgbmghkdjckppeomloefmbphdfmokgd.json
 Kept file: jdfkmiabjpfjacifcmihfdjhpnjpiick.json
 Kept file: savior.crx
 ```
-- Bản portable sửa lại `browser.exe` gốc để bypass [Secure Preferences](https://chromium.woolyss.com/#secure-preferences) nhằm tạo ra phiên bản portable thực sự
-- Thêm vào 5 file `version.dll`, `chrome++.ini`, `update.bat`, `debloat.reg`, `default-apps-multi-profile.bat` so với cài đặt thông thường
 
 Bạn nào muốn Cốc Cốc sạch sẽ hơn, bật chạy `debloat.reg` thủ công là được
 
@@ -43,7 +43,7 @@ Bạn nào muốn Cốc Cốc sạch sẽ hơn, bật chạy `debloat.reg` thủ
 ### Cập nhập bản mới
 
 - Chạy file `update.bat`
-- Nó sẽ chép bản mới nhất vào (giữ lại file cấu hình `chrome++.ini`cũ)
+- Nó sẽ chép bản mới nhất vào (không ghi đè các file `chrome++.ini`, `debloat.reg` có sẵn, tránh làm mất cấu hình nếu bạn chỉnh sửa lại)
 
 ---
 
