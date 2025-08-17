@@ -5,8 +5,6 @@ echo CocCoc Portable Auto Updater
 echo ================================
 echo.
 
-:: Create PowerShell script
-echo Creating update script...
 (
 echo # CocCoc Updater
 echo $ErrorActionPreference = "Stop"
@@ -49,7 +47,17 @@ echo.
 echo   Write-Host "Updating files..."
 echo   Get-ChildItem $currentDir ^| Where-Object { $_.Name -ne "update.bat" -and $_.Name -ne "chrome++.ini" } ^| Remove-Item -Recurse -Force
 echo.
-echo   robocopy $extractedDir.FullName $currentDir /E /XF update.bat chrome++.ini /NFL /NDL /NJH /NJS /NC /NS /NP
+echo   Get-ChildItem $extractedDir.FullName -Recurse ^| Where-Object { $_.Name -ne "update.bat" -and $_.Name -ne "chrome++.ini" } ^| ForEach-Object {
+echo     $relativePath = $_.FullName.Substring^($extractedDir.FullName.Length + 1^)
+echo     $destPath = Join-Path $currentDir $relativePath
+echo     if ^($_.PSIsContainer^) {
+echo       New-Item -ItemType Directory -Path $destPath -Force ^| Out-Null
+echo     } else {
+echo       $destFolder = Split-Path $destPath -Parent
+echo       if ^(-not ^(Test-Path $destFolder^)^) { New-Item -ItemType Directory -Path $destFolder -Force ^| Out-Null }
+echo       Copy-Item $_.FullName -Destination $destPath -Force
+echo     }
+echo   }
 echo.
 echo   Remove-Item $tempDir -Recurse -Force
 echo   Write-Host "Update completed! Version: $latestVersion" -ForegroundColor Green
