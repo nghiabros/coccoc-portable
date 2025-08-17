@@ -22,7 +22,7 @@ Bạn nào muốn Cốc Cốc sạch sẽ hơn, có thể [debloat](https://gith
 ### Cập nhập bản mới
 
 - Chạy file `update.bat`
-- Nó sẽ xóa các bản cũ (giữ lại file cấu hình `chrome++.ini`), chép bản mới nhất vào
+- Nó sẽ chép bản mới nhất vào (giữ lại file cấu hình `chrome++.ini`cũ)
 
 ---
 
