@@ -11,11 +11,11 @@ Cốc Cốc Portable được cài đặt trực tiếp từ bản [standalone](
 
 <img src="https://img.bibica.net/cWQQ5LyN.png" alt="cWQQ5LyN">
 
-Bản portable không tinh chỉnh gì, chỉ thêm vào 2 file `version.dll` và `chrome++.ini` so với bản cài đặt thông thường
+- Bản portable thêm vào 2 file `version.dll`, `chrome++.ini` và sửa lại `browser.exe` so với bản cài đặt thông thường
 
 Bạn nào muốn Cốc Cốc sạch sẽ hơn, có thể [debloat](https://github.com/bibicadotnet/coccoc-debloat) thủ công lại 1 chút
 
-Đây là 1 sản phẩm dùng cá nhân, chắc cũng chẳng ai dùng trình duyệt Cốc Cốc, nên chỉ tạo 1 bản stable x64 chạy trên Windows
+Đây là 1 sản phẩm dùng cá nhân, chắc cũng hiếm ai dùng trình duyệt Cốc Cốc, nên chỉ tạo bản stable x64 thông dụng nhất chạy trên Windows
 
 ---
 
