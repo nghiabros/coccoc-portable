@@ -43,7 +43,7 @@ Bạn nào muốn Cốc Cốc sạch sẽ hơn, bật chạy `debloat.reg` thủ
 ### Cập nhập bản mới
 
 - Chạy file `update.bat`
-- Nó sẽ chép bản mới nhất vào (không ghi đè các file `update.bat`, `chrome++.ini`, `debloat.reg`, `default-apps-multi-profile.bat` có sẵn, tránh làm mất cấu hình nếu bạn chỉnh sửa lại)
+- Nó chỉ chép bản mới nhất vào (không ghi đè các file `update.bat`, `chrome++.ini`, `debloat.reg`, `default-apps-multi-profile.bat` có sẵn, tránh làm mất cấu hình nếu bạn chỉnh sửa lại)
 
 ---
 
