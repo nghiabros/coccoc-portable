@@ -35,14 +35,21 @@ Removed from Extensions: gfgbmghkdjckppeomloefmbphdfmokgd.json
 Kept file: jdfkmiabjpfjacifcmihfdjhpnjpiick.json
 Kept file: savior.crx
 ```
+### Debloat
 
-Bạn nào muốn Cốc Cốc sạch sẽ hơn, bật chạy `debloat.reg` thủ công là được
+Bạn nào muốn Cốc Cốc sạch sẽ hơn, bật chạy `CocCoc_Portable\CocCoc\debloat.reg`
+
+---
+
+### Đặt làm trình duyệt mặc định
+
+- Chạy file `CocCoc_Portable\CocCoc\default-apps-multi-profile.bat`
 
 ---
 
 ### Cập nhập bản mới
 
-- Chạy file `update.bat`
+- Chạy file `CocCoc_Portable\CocCoc\update.bat`
 - Nó chỉ chép bản mới nhất vào (không ghi đè các file `update.bat`, `chrome++.ini`, `debloat.reg`, `default-apps-multi-profile.bat` có sẵn, tránh làm mất cấu hình nếu bạn chỉnh sửa lại)
 
 ---
