@@ -59,11 +59,25 @@ jobs:
             Write-Host "Removed Installer directory"
           }
           
+          # Remove additional files and directories
+          $itemsToRemove = @(
+            "C:\Program Files\CocCoc\Browser\Application\SetupMetrics",
+            "C:\Program Files\CocCoc\Browser\Application\browser_proxy.exe",
+            "C:\Program Files\CocCoc\Browser\Application\VisualElementsManifest.xml"
+          )
+          
+          foreach ($item in $itemsToRemove) {
+            if (Test-Path $item) {
+              Remove-Item $item -Recurse -Force -ErrorAction SilentlyContinue
+              Write-Host "Removed: $item"
+            }
+          }
+          
         } catch {
           Write-Error "Failed to get CocCoc version: $($_.Exception.Message)"
           exit 1
         }
-        
+
     - name: Get latest Chrome++ version
       id: chromeplus-version
       shell: powershell
