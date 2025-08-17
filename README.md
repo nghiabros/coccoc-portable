@@ -52,7 +52,7 @@ Bạn nào muốn Cốc Cốc sạch sẽ hơn, bật chạy `debloat.reg` thủ
 <img src="https://img.bibica.net/Koy2oGJn.png" alt="Koy2oGJn">
 </p>
 
-Không biết Cốc Cốc đặt tên phiên bản ở chỗ nào, nên mình dùng tên ở phiên bản theo hiển thị tên thư mục và tên file làm tên gọi cho phiên bản portable (nó sẽ không chính xác so với con số thể hiện ra ở 'coccoc://version/`)
+Không biết Cốc Cốc đặt tên phiên bản ở chỗ nào, nên mình dùng tên ở phiên bản theo hiển thị tên thư mục và tên file làm tên gọi cho phiên bản portable (nó sẽ không chính xác so với con số thể hiện ra ở `coccoc://version/`)
 
 ### Fork dự án
 
