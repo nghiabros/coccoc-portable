@@ -9,9 +9,9 @@ Cốc Cốc Portable được cài đặt trực tiếp từ bản [standalone](
 - Hỗ trợ các command line switches và chỉnh sửa tính năng qua file cấu hình `chrome++.ini`
 - Thích hợp cho người dùng muốn nhẹ – nhanh – tiện – linh hoạt
 
-<img src="https://img.bibica.net/cWQQ5LyN.png" alt="cWQQ5LyN">
+<img src="https://img.bibica.net/IwQwVnNi.png" alt="IwQwVnNi">
 
-- Bản portable thêm vào 2 file `version.dll`, `chrome++.ini` và sửa lại `browser.exe` so với bản cài đặt thông thường
+- Bản portable sửa lại `browser.exe`, thêm vào 3 file `version.dll`, `chrome++.ini`, `update.bat` so với cài đặt thông thường
 
 Bạn nào muốn Cốc Cốc sạch sẽ hơn, có thể [debloat](https://github.com/bibicadotnet/coccoc-debloat) thủ công lại 1 chút
 
@@ -21,8 +21,8 @@ Bạn nào muốn Cốc Cốc sạch sẽ hơn, có thể [debloat](https://gith
 
 ### Cập nhập bản mới
 
-- Download các phiên bản [release](https://github.com/bibicadotnet/coccoc-portable/releases) mới, giải nén, chép đè vào thư mục cũ
-- Nếu không chỉnh sửa, cấu hình thêm gì file `chrome++.ini`, có thể xóa toàn bộ thư mục `CocCoc_Portable\CocCoc`, rồi chép `CocCoc_Portable\CocCoc` mới vào cho sạch sẽ
+- Chạy file `update.bat`
+- Nó sẽ xóa các bản cũ (giữ lại file cấu hình `chrome++.ini`), chép bản mới nhất vào
 
 ---
 
