@@ -47,12 +47,12 @@ Bạn nào muốn Cốc Cốc sạch sẽ hơn, bật chạy `debloat.reg` thủ
 
 ---
 
-### Phiên bản mới???
+### Tên gọi phiên bản mới???
 <p align="center">
 <img src="https://img.bibica.net/Koy2oGJn.png" alt="Koy2oGJn">
 </p>
 
-Cốc Cốc không thấy hỗ trợ download bản cũ, trừ vào 'coccoc://version/` xem phiên bản, còn lại không biết họ đặt tên phiên bản ở chỗ nào, nên dùng theo tên ở phiên bản hiển thị ở thư mục và tên file làm tên phiên bản portable
+Không biết Cốc Cốc đặt tên phiên bản ở chỗ nào, nên mình dùng tên ở phiên bản theo hiển thị tên thư mục và tên file làm tên gọi cho phiên bản portable (nó sẽ không chính xác so với con số thể hiện ra ở 'coccoc://version/`)
 
 ### Fork dự án
 
