@@ -47,7 +47,7 @@ Bạn nào muốn Cốc Cốc sạch sẽ hơn, bật chạy `debloat.reg` thủ
 
 ---
 
-### Tên gọi phiên bản mới???
+### Tên gọi phiên bản portable
 <p align="center">
 <img src="https://img.bibica.net/Koy2oGJn.png" alt="Koy2oGJn">
 </p>
