@@ -1,12 +1,12 @@
 # Cốc Cốc Portable với Chrome++
 
-Cốc Cốc Portable được build trực tiếp từ bản cài đặt [standalone](https://support.coccoc.com/desktop/tai-ve-va-cai-dat-coc-coc-offline-cho-may-tinh-windows) chính thức của CocCoc, sau đó sử dụng Chrome++ để chuyển hoàn toàn sang bản di động
+Cốc Cốc Portable được cài đặt trực tiếp từ bản [standalone](https://support.coccoc.com/desktop/tai-ve-va-cai-dat-coc-coc-offline-cho-may-tinh-windows), sau đó sử dụng [Chrome++](https://github.com/Bush2021/chrome_plus) để chuyển hoàn toàn sang bản di động
 
 <img src="https://img.bibica.net/VYqhc1DL.png" alt="VYqhc1DL">
 
 - Download các phiên bản [portable](https://github.com/bibicadotnet/coccoc-portable/releases) làm sẵn, giải nén, là có thể sử dụng
 - Copy thư mục `CocCoc_Portable`, mang sang máy khác dùng ngay mà không mất dữ liệu, không cần cấu hình lại các plugin, history ...
-- Hỗ trợ thêm các lệnh dòng (command line switches) và chỉnh sửa nhiều tính năng qua file cấu hình `chrome++.ini`
+- Hỗ trợ các command line switches và chỉnh sửa tính năng qua file cấu hình `chrome++.ini`
 - Thích hợp cho người dùng muốn nhẹ – nhanh – tiện – linh hoạt
 
 <img src="https://img.bibica.net/cWQQ5LyN.png" alt="cWQQ5LyN">
