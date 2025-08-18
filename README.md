@@ -20,24 +20,36 @@ Cốc Cốc Portable Debloat được cài đặt trực tiếp từ [coccoc_en_
 - Bản portable sửa lại `browser.exe` gốc để bypass [Secure Preferences](https://chromium.woolyss.com/#secure-preferences) nhằm tạo ra phiên bản portable thực sự
 - Thêm vào 5 file `version.dll`, `chrome++.ini`, `update.bat`, `debloat.reg`, `default-apps-multi-profile.bat` so với cài đặt thông thường
 - Các file được xóa thêm ở quá trình build portable 
-```
-Removed Installer directory
-Removed Dictionaries directory
-Removed: C:\Program Files\CocCoc\Browser\Application\SetupMetrics
-Removed: C:\Program Files\CocCoc\Browser\Application\browser_proxy.exe
-Removed: C:\Program Files\CocCoc\Browser\Application\VisualElementsManifest.xml
-Removed from Extensions: afaljjbleihmahhpckngondmgohleljb.json
-Removed from Extensions: cache.crx
-Removed from Extensions: cashback.crx
-Removed from Extensions: en2vi.crx
-Removed from Extensions: gcopfpdkmpdacdmbjonfjmbnccmnjdoi.json
-Removed from Extensions: gfgbmghkdjckppeomloefmbphdfmokgd.json
-Kept file: jdfkmiabjpfjacifcmihfdjhpnjpiick.json
-Kept file: savior.crx
-```
+  - Removed Installer directory
+  - Removed Dictionaries directory
+  - Removed: C:\Program Files\CocCoc\Browser\Application\SetupMetrics
+  - Removed: C:\Program Files\CocCoc\Browser\Application\browser_proxy.exe
+  - Removed: C:\Program Files\CocCoc\Browser\Application\VisualElementsManifest.xml
+  - Removed from Extensions: afaljjbleihmahhpckngondmgohleljb.json
+  - Removed from Extensions: cache.crx
+  - Removed from Extensions: cashback.crx
+  - Removed from Extensions: en2vi.crx
+  - Removed from Extensions: gcopfpdkmpdacdmbjonfjmbnccmnjdoi.json
+  - Removed from Extensions: gfgbmghkdjckppeomloefmbphdfmokgd.json
+  - Kept file: jdfkmiabjpfjacifcmihfdjhpnjpiick.json
+  - Kept file: savior.crx
+
 ### Debloat
 
 Bạn nào muốn Cốc Cốc sạch sẽ hơn, bật chạy `CocCoc_Portable\CocCoc\debloat.reg`
+
+Chặn hoàn toàn các domain liên quan tới coccoc
+
+- coccoc.com
+- qc.coccoc.com
+- qccdn.coccoc.com
+- cdn-qc.coccoc.com
+- qccoccocmedia.vn
+- catalog.qc.coccoc.com
+- qc-static.coccoc.com
+- ntrb.qc.coccoc.com
+- context.qc.coccoc.com
+- qcvod.coccoc.com
 
 ---
 
