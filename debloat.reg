@@ -172,3 +172,15 @@ Windows Registry Editor Version 5.00
 ;[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\CocCoc\ExtensionSettings]
 ; Canvas Blocker - Fingerprint Protect
 ;"nomnklagbgmgghhjidfhnoelnjfndfpd"="{\"update_url\":\"https://clients2.google.com/service/update2/crx\",\"installation_mode\":\"normal_installed\"}"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Policies\CocCoc\URLBlocklist]
+"1"="coccoc.com"
+"2"="qc.coccoc.com"
+"3"="qccdn.coccoc.com"
+"4"="cdn-qc.coccoc.com"
+"5"="qccoccocmedia.vn"
+"6"="catalog.qc.coccoc.com"
+"7"="qc-static.coccoc.com"
+"8"="ntrb.qc.coccoc.com"
+"9"="context.qc.coccoc.com"
+"10"="qcvod.coccoc.com"
