@@ -1,10 +1,8 @@
 @echo off
 setlocal
-
-echo CocCoc Portable Updater
+echo CocCoc Portable Updater v1.0
 echo ================================
 echo.
-
 (
 echo # CocCoc Updater
 echo $ErrorActionPreference = "Stop"
@@ -49,15 +47,20 @@ echo   if ^(Test-Path "browser.exe"^) { Remove-Item "browser.exe" -Force }
 echo   if ^(Test-Path "version.dll"^) { Remove-Item "version.dll" -Force }
 echo   if ^(Test-Path $currentVersion^) { Remove-Item $currentVersion -Recurse -Force }
 echo.
-echo   Get-ChildItem $extractedDir.FullName -Recurse ^| Where-Object { $_.Name -notin "update.bat","chrome++.ini","debloat.reg","default-apps-multi-profile.bat" } ^| ForEach-Object {
+echo   Get-ChildItem $extractedDir.FullName -Recurse ^| ForEach-Object {
 echo     $relativePath = $_.FullName.Substring^($extractedDir.FullName.Length + 1^)
 echo     $destPath = Join-Path $currentDir $relativePath
 echo     if ^($_.PSIsContainer^) {
 echo       New-Item -ItemType Directory -Path $destPath -Force ^| Out-Null
 echo     } else {
-echo       $destFolder = Split-Path $destPath -Parent
-echo       if ^(-not ^(Test-Path $destFolder^)^) { New-Item -ItemType Directory -Path $destFolder -Force ^| Out-Null }
-echo       Copy-Item $_.FullName -Destination $destPath -Force
+echo       $protectedFiles = @^("chrome++.ini","debloat.reg","default-apps-multi-profile.bat"^)
+echo       if ^($_.Name -in $protectedFiles -and ^(Test-Path $destPath^)^) {
+echo         Write-Host "Skipping: $_Name"
+echo       } else {
+echo         $destFolder = Split-Path $destPath -Parent
+echo         if ^(-not ^(Test-Path $destFolder^)^) { New-Item -ItemType Directory -Path $destFolder -Force ^| Out-Null }
+echo         Copy-Item $_.FullName -Destination $destPath -Force
+echo       }
 echo     }
 echo   }
 echo.
@@ -75,7 +78,5 @@ echo }
 echo.
 echo Read-Host "Press Enter to exit"
 ) > "%TEMP%\coccoc_update.ps1"
-
 powershell -NoProfile -ExecutionPolicy Bypass -File "%TEMP%\coccoc_update.ps1"
-
 del "%TEMP%\coccoc_update.ps1" 2>nul
