@@ -19,7 +19,7 @@ Cốc Cốc Portable Debloat được cài đặt trực tiếp từ [coccoc_en_
 
 - Bản portable sửa lại `browser.exe` gốc để bypass [Secure Preferences](https://chromium.woolyss.com/#secure-preferences) nhằm tạo ra phiên bản portable thực sự
 - Thêm vào 5 file `version.dll`, `chrome++.ini`, `update.bat`, `debloat.reg`, `default-apps-multi-profile.bat` so với cài đặt thông thường
-- Các file được xóa thêm ở quá trình build portable 
+- Các file xóa ở quá trình build portable
   - Removed Installer directory
   - Removed Dictionaries directory
   - Removed: C:\Program Files\CocCoc\Browser\Application\SetupMetrics
@@ -62,7 +62,7 @@ Chặn hoàn toàn các domain liên quan tới coccoc
 ### Cập nhập bản mới
 
 - Chạy file `CocCoc_Portable\CocCoc\update.bat`
-- Nó chỉ chép bản mới nhất vào (không ghi đè các file `update.bat`, `chrome++.ini`, `debloat.reg`, `default-apps-multi-profile.bat` có sẵn, tránh làm mất cấu hình nếu bạn chỉnh sửa lại)
+- Nó chỉ chép bản mới nhất vào (không ghi đè các file `chrome++.ini`, `debloat.reg`, `default-apps-multi-profile.bat` có sẵn, tránh làm mất cấu hình nếu bạn chỉnh sửa lại)
 
 ---
 
@@ -71,7 +71,7 @@ Chặn hoàn toàn các domain liên quan tới coccoc
 <img src="https://img.bibica.net/Koy2oGJn.png" alt="Koy2oGJn">
 </p>
 
-Không biết Cốc Cốc đặt tên phiên bản ở chỗ nào, nên mình dùng tên ở phiên bản theo hiển thị tên thư mục và tên file làm tên gọi cho phiên bản portable (nó sẽ không chính xác so với con số thể hiện ra ở `coccoc://version/`)
+Không tìm thấy cách Cốc Cốc đặt tên phiên bản ở chỗ nào, nên dùng tên theo Chromium version (nó sẽ không chính xác so với con số thể hiện ra ở `coccoc://version/`)
 
 ### Fork dự án
 
