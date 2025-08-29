@@ -55,7 +55,7 @@ echo       New-Item -ItemType Directory -Path $destPath -Force ^| Out-Null
 echo     } else {
 echo       $protectedFiles = @^("chrome++.ini","debloat.reg","default-apps-multi-profile.bat"^)
 echo       if ^($_.Name -in $protectedFiles -and ^(Test-Path $destPath^)^) {
-echo         Write-Host "Skipping: $_Name"
+echo         Write-Host "Skipping: $($_.Name)"
 echo       } else {
 echo         $destFolder = Split-Path $destPath -Parent
 echo         if ^(-not ^(Test-Path $destFolder^)^) { New-Item -ItemType Directory -Path $destFolder -Force ^| Out-Null }
