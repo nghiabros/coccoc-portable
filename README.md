@@ -66,6 +66,12 @@ Chặn hoàn toàn các domain liên quan tới coccoc
 
 ---
 
+### Lỗi
+
+Các file video, auto ... chạy qua DRM có thể gặp lỗi, không xem được
+
+---
+
 ### Tên gọi phiên bản portable
 <p align="center">
 <img src="https://img.bibica.net/Koy2oGJn.png" alt="Koy2oGJn">
