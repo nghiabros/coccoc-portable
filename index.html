@@ -280,12 +280,9 @@
                 <h2>⭐ Tính năng</h2>
                 <div class="features">
                     <ul>
-                        <li>Phiên bản Cốc Cốc Portable đã được tối ưu</li>
-                        <li>Chỉ hỗ trợ Windows x64</li>
-                        <li>Portable - không cần cài đặt</li>
-                        <li>Tất cả dữ liệu được lưu trữ cục bộ</li>
-                        <li>Đã loại bỏ các tính năng không cần thiết</li>
-                        <li>Tối ưu hiệu suất và tốc độ</li>
+                        <li>Phiên bản Cốc Cốc Portable đã được tối ưu, tất cả dữ liệu được lưu trữ cục bộ</li>
+                        <li>Gỡ bỏ các quảng cáo, tính năng không cần thiết của Cốc Cốc, giúp giao diện sạch sẽ hơn</li>
+                        <li>Tối ưu hiệu năng, tăng thêm một chút quyền riêng tư, dễ tùy chỉnh theo nhu cầu cá nhân</li>
                     </ul>
                 </div>
             </div>
@@ -296,18 +293,20 @@
                     <ul>
                         <li><strong>chrome++.ini</strong>: File cấu hình cho <a href="https://github.com/Bush2021/chrome_plus" target="_blank">Chrome++</a></li>
                         <li><strong>debloater.reg</strong>: Loại bỏ các tính năng không cần thiết của Cốc Cốc</li>
-                        <li><strong>default-apps.bat</strong>: Đặt Cốc Cốc làm trình duyệt mặc định</li>
+                        <li><strong>default-apps-multi-profile.bat</strong>: Đặt Cốc Cốc làm trình duyệt mặc định</li>
                         <li><strong>update.bat</strong>: Cập nhật lên phiên bản mới nhất</li>
                     </ul>
                 </div>
             </div>
 
             <div class="section">
-                <h2>⚠️ Cảnh báo Microsoft Defender Antivirus</h2>
+                <h2>⚠️ Cảnh báo</h2>
                 <div class="features">
-                    <p>Do cách thức bypass để chạy Cốc Cốc ở chế độ portable, Microsoft Defender Antivirus có thể nhận diện nhầm là trojan.</p>
-                    <br>
-                    <p><strong>Giải pháp:</strong> Cho phép/loại trừ file và đợi Microsoft Defender cập nhật định nghĩa để loại bỏ cảnh báo sai.</p>
+                    <ul>
+                        <li>Do cách thức bypass để chạy Cốc Cốc ở chế độ portable, Microsoft Defender Antivirus đôi lúc "có thể" nhận diện nhầm là trojan.</li>
+                        <li><strong>Giải pháp:</strong> Cho phép/loại trừ file và đợi Microsoft Defender cập nhật định nghĩa để loại bỏ cảnh báo sai.</li>                        
+                        <li>Các video, auto chạy qua DRM sẽ gặp lỗi, chưa có hướng xử lý, vì đã bypass Secure Preferences</li>
+                    </ul>
                 </div>
             </div>
 
@@ -319,51 +318,40 @@
 
     <script>
         // Hiển thị thông tin Chromium version
-        if (navigator.userAgentData && navigator.userAgentData.getHighEntropyValues) {
-            navigator.userAgentData.getHighEntropyValues(["fullVersionList"]).then(function(data) {
-                if (data.fullVersionList.length !== 0) {
-                    var brandsList = data.fullVersionList;
-                    var chromiumVersion = null;
-                    var browserName = null;
-                    var browserVersion = null;
+        navigator.userAgentData.getHighEntropyValues(["fullVersionList"]).then(function(data) {
+            if (data.fullVersionList.length !== 0) {
+                var brandsList = data.fullVersionList;
+                var chromiumVersion = null;
+                var browserName = null;
+                var browserVersion = null;
 
-                    // Lấy Chromium version
-                    for (var i = 0; i < brandsList.length; i++) {
-                        if (brandsList[i].brand === "Chromium") {
-                            chromiumVersion = brandsList[i].version;
-                            break;
-                        }
-                    }
-
-                    // Tìm thông tin trình duyệt
-                    var browsers = ["Microsoft Edge", "Google Chrome", "Cốc Cốc Browser"];
-                    for (var j = 0; j < browsers.length; j++) {
-                        for (var i = 0; i < brandsList.length; i++) {
-                            if (brandsList[i].brand === browsers[j]) {
-                                browserName = browsers[j];
-                                browserVersion = brandsList[i].version;
-                                break;
-                            }
-                        }
-                        if (browserName) break;
-                    }
-
-                    var displayText = "";
-                    if (browserName) {
-                        displayText = browserName + "\t" + browserVersion + "<br>" +
-                                      "Chromium version\t" + chromiumVersion;
-                    } else if (chromiumVersion) {
-                        displayText = "Chromium version\t" + chromiumVersion;
-                    }
-
-                    if (displayText) {
-                        document.getElementById("uaChromiumVersion").innerHTML = displayText;
+                // Lấy Chromium version
+                for (var i = 0; i < brandsList.length; i++) {
+                    if (brandsList[i].brand === "Chromium") {
+                        chromiumVersion = brandsList[i].version;
+                        break;
                     }
                 }
-            }).catch(function(error) {
-                console.log("Could not get user agent data:", error);
-            });
-        }
+
+                for (var i = 0; i < brandsList.length; i++) {
+                    if (brandsList[i].brand === "Microsoft Edge") {
+                        browserName = "Microsoft Edge";
+                        browserVersion = brandsList[i].version;
+                        break;
+                    }
+                }
+
+                var displayText = "";
+                if (browserName === "Microsoft Edge") {
+                    displayText = browserName + "\t" + browserVersion + "<br>" +
+                                  "Chromium version\t" + chromiumVersion;
+                } else {
+                    displayText = "Chromium version\t" + chromiumVersion;
+                }
+
+                document.getElementById("uaChromiumVersion").innerHTML = displayText;
+            }
+        });
 
         // Lấy thông tin releases từ GitHub API
         async function fetchReleases() {
