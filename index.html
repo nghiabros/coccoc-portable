@@ -316,133 +316,159 @@
         </div>
     </div>
 
-    <script>
-        // Hiển thị thông tin Chromium version
-        navigator.userAgentData.getHighEntropyValues(["fullVersionList"]).then(function(data) {
-            if (data.fullVersionList.length !== 0) {
-                var brandsList = data.fullVersionList;
-                var chromiumVersion = null;
-                var browserName = null;
-                var browserVersion = null;
+<script>
+    // Hiển thị thông tin Chromium version
+    navigator.userAgentData.getHighEntropyValues(["fullVersionList"]).then(function(data) {
+        if (data.fullVersionList.length !== 0) {
+            var brandsList = data.fullVersionList;
+            var chromiumVersion = null;
+            var browserName = null;
+            var browserVersion = null;
 
-                // Lấy Chromium version
-                for (var i = 0; i < brandsList.length; i++) {
-                    if (brandsList[i].brand === "Chromium") {
-                        chromiumVersion = brandsList[i].version;
-                        break;
-                    }
+            // Lấy Chromium version
+            for (var i = 0; i < brandsList.length; i++) {
+                if (brandsList[i].brand === "Chromium") {
+                    chromiumVersion = brandsList[i].version;
+                    break;
                 }
-
-                for (var i = 0; i < brandsList.length; i++) {
-                    if (brandsList[i].brand === "Microsoft Edge") {
-                        browserName = "Microsoft Edge";
-                        browserVersion = brandsList[i].version;
-                        break;
-                    }
-                }
-
-                var displayText = "";
-                if (browserName === "Microsoft Edge") {
-                    displayText = browserName + "\t" + browserVersion + "<br>" +
-                                  "Chromium version\t" + chromiumVersion;
-                } else {
-                    displayText = "Chromium version\t" + chromiumVersion;
-                }
-
-                document.getElementById("uaChromiumVersion").innerHTML = displayText;
             }
-        });
 
-        // Lấy thông tin releases từ GitHub API
-        async function fetchReleases() {
-            try {
-                const response = await fetch('https://api.github.com/repos/bibicadotnet/coccoc-portable/releases');
+            for (var i = 0; i < brandsList.length; i++) {
+                if (brandsList[i].brand === "Microsoft Edge") {
+                    browserName = "Microsoft Edge";
+                    browserVersion = brandsList[i].version;
+                    break;
+                }
+            }
+
+            var displayText = "";
+            if (browserName === "Microsoft Edge") {
+                displayText = browserName + "\t" + browserVersion + "<br>" +
+                              "Chromium version\t" + chromiumVersion;
+            } else {
+                displayText = "Chromium version\t" + chromiumVersion;
+            }
+
+            document.getElementById("uaChromiumVersion").innerHTML = displayText;
+        }
+    });
+
+    // Lấy thông tin releases từ GitHub API
+    async function fetchReleases() {
+        try {
+            let allReleases = [];
+            let page = 1;
+            const perPage = 100; // GitHub API cho phép tối đa 100 items per page
+            
+            // Lấy tất cả releases thay vì chỉ 30 releases đầu
+            while (true) {
+                const response = await fetch(`https://api.github.com/repos/bibicadotnet/coccoc-portable/releases?page=${page}&per_page=${perPage}`);
                 const releases = await response.json();
                 
-                if (!Array.isArray(releases)) {
-                    throw new Error('Invalid response format');
+                if (!Array.isArray(releases) || releases.length === 0) {
+                    break;
                 }
-
-                // Lọc và sắp xếp releases
-                const processedReleases = processReleases(releases);
-                displayReleases(processedReleases);
                 
-            } catch (error) {
-                console.error('Error fetching releases:', error);
-                document.getElementById('versions-content').innerHTML = 
-                    '<div class="error">Không thể tải danh sách phiên bản. Vui lòng thử lại sau.</div>';
-            }
-        }
-
-        function processReleases(releases) {
-            // Lọc các releases có tag_name phù hợp với pattern
-            const validReleases = releases.filter(release => {
-                return release.tag_name && release.tag_name.match(/^coccoc-portable-x64_(\d+\.\d+\.\d+\.\d+)_/);
-            });
-
-            // Tạo map để nhóm theo major version
-            const versionMap = new Map();
-            
-            validReleases.forEach(release => {
-                const match = release.tag_name.match(/^coccoc-portable-x64_(\d+)\.(\d+)\.(\d+)\.(\d+)_/);
-                if (match) {
-                    const majorVersion = parseInt(match[1]);
-                    const fullVersion = `${match[1]}.${match[2]}.${match[3]}.${match[4]}`;
-                    
-                    if (!versionMap.has(majorVersion) || 
-                        new Date(release.published_at) > new Date(versionMap.get(majorVersion).published_at)) {
-                        versionMap.set(majorVersion, {
-                            ...release,
-                            majorVersion: majorVersion,
-                            fullVersion: fullVersion
-                        });
-                    }
+                allReleases = allReleases.concat(releases);
+                
+                // Nếu số lượng releases trong page này ít hơn perPage, 
+                // có nghĩa là đã lấy hết
+                if (releases.length < perPage) {
+                    break;
                 }
-            });
-
-            // Sắp xếp theo major version giảm dần và lấy tối đa 5 phiên bản
-            return Array.from(versionMap.values())
-                .sort((a, b) => b.majorVersion - a.majorVersion)
-                .slice(0, 5);
-        }
-
-        function displayReleases(releases) {
-            if (releases.length === 0) {
-                document.getElementById('versions-content').innerHTML = 
-                    '<div class="error">Không tìm thấy phiên bản nào.</div>';
-                return;
+                
+                page++;
             }
 
-            let html = '<ul class="version-list">';
+            // Lọc và sắp xếp releases
+            const processedReleases = processReleases(allReleases);
+            displayReleases(processedReleases);
             
-            releases.forEach((release, index) => {
-                const downloadUrl = `https://github.com/bibicadotnet/coccoc-portable/releases/download/${release.tag_name}/${release.tag_name}.zip`;
-                const isLatest = index === 0;
-                const statusClass = isLatest ? 'status-current' : 'status-outdated';
-                const statusText = isLatest ? 'Phiên bản mới nhất' : 'Phiên bản cũ hơn';
-                
-                html += `
-                    <li class="version-item">
-                        <div class="version-info">
-                            <h3>Cốc Cốc Portable ${release.majorVersion}.x</h3>
-                            <div class="version-status">
-                                <span class="status-dot ${statusClass}"></span>
-                                ${statusText}
-                            </div>
-                        </div>
-                        <a href="${downloadUrl}" class="version-number" target="_blank">${release.fullVersion}</a>
-                    </li>
-                `;
-            });
-            
-            html += '</ul>';
-            document.getElementById('versions-content').innerHTML = html;
+        } catch (error) {
+            console.error('Error fetching releases:', error);
+            document.getElementById('versions-content').innerHTML = 
+                '<div class="error">Không thể tải danh sách phiên bản. Vui lòng thử lại sau.</div>';
         }
+    }
 
-        // Tải dữ liệu khi trang được load
-        document.addEventListener('DOMContentLoaded', function() {
-            fetchReleases();
+    function processReleases(releases) {
+        // Lọc các releases có tag_name phù hợp với pattern
+        const validReleases = releases.filter(release => {
+            return release.tag_name && release.tag_name.match(/^coccoc-portable-x64_(\d+\.\d+\.\d+\.\d+)_/);
         });
-    </script>
+
+        // Tạo map để nhóm theo major version
+        const versionMap = new Map();
+        
+        validReleases.forEach(release => {
+            const match = release.tag_name.match(/^coccoc-portable-x64_(\d+)\.(\d+)\.(\d+)\.(\d+)_/);
+            if (match) {
+                const majorVersion = parseInt(match[1]);
+                const fullVersion = `${match[1]}.${match[2]}.${match[3]}.${match[4]}`;
+                
+                if (!versionMap.has(majorVersion) || 
+                    new Date(release.published_at) > new Date(versionMap.get(majorVersion).published_at)) {
+                    versionMap.set(majorVersion, {
+                        ...release,
+                        majorVersion: majorVersion,
+                        fullVersion: fullVersion
+                    });
+                }
+            }
+        });
+
+        // Sắp xếp theo major version giảm dần và lấy tối đa 5 phiên bản
+        return Array.from(versionMap.values())
+            .sort((a, b) => b.majorVersion - a.majorVersion)
+            .slice(0, 5);
+    }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    }
+
+    function displayReleases(releases) {
+        if (releases.length === 0) {
+            document.getElementById('versions-content').innerHTML = 
+                '<div class="error">Không tìm thấy phiên bản nào.</div>';
+            return;
+        }
+
+        let html = '<ul class="version-list">';
+        
+        releases.forEach((release, index) => {
+            const downloadUrl = `https://github.com/bibicadotnet/coccoc-portable/releases/download/${release.tag_name}/${release.tag_name}.zip`;
+            const isLatest = index === 0;
+            const statusClass = isLatest ? 'status-current' : 'status-outdated';
+            const releaseDate = formatDate(release.published_at);
+            
+            html += `
+                <li class="version-item">
+                    <div class="version-info">
+                        <h3>Cốc Cốc Portable ${release.majorVersion}.x</h3>
+                        <div class="version-status">
+                            <span class="status-dot ${statusClass}"></span>
+                            Ngày phát hành: ${releaseDate}
+                        </div>
+                    </div>
+                    <a href="${downloadUrl}" class="version-number" target="_blank">${release.fullVersion}</a>
+                </li>
+            `;
+        });
+        
+        html += '</ul>';
+        document.getElementById('versions-content').innerHTML = html;
+    }
+
+    // Tải dữ liệu khi trang được load
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchReleases();
+    });
+</script>
+
 </body>
 </html>
