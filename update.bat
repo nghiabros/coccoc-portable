@@ -7,14 +7,16 @@ echo.
 echo # CocCoc Updater
 echo $ErrorActionPreference = "Stop"
 echo $coccocPath = Join-Path "%~dp0" "browser.exe"
-echo $apiUrl = "https://api.github.com/repos/bibicadotnet/coccoc-portable/releases/latest"
+echo $apiUrl = "https://api.github.com/repos/bibicadotnet/coccoc-portable/releases"
 echo $tempDir = Join-Path $env:TEMP "CocCocUpdate"
 echo.
 echo try {
 echo   $currentVersion = if ^(Test-Path $coccocPath^) { ^(Get-Item $coccocPath^).VersionInfo.ProductVersion } else { "Not installed" }
-echo   $response = Invoke-RestMethod -Uri $apiUrl
-echo   $latestVersion = ^($response.tag_name -split "_"^)^[1^]
-echo   $downloadUrl = $response.assets^[0^].browser_download_url
+echo   $allReleases = Invoke-RestMethod -Uri $apiUrl
+echo   $channelReleases = $allReleases ^| Where-Object { $_.tag_name -like "coccoc-portable-x64_*" }
+echo   $latestRelease = $channelReleases ^| Sort-Object { if ^($_.tag_name -match "([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)"^) { [System.Version]$matches[1] } else { [System.Version]"0.0.0.0" } } -Descending ^| Select-Object -First 1
+echo   $latestVersion = ^($latestRelease.tag_name -split "_"^)^[1^]
+echo   $downloadUrl = $latestRelease.assets^[0^].browser_download_url
 echo.
 echo   Write-Host "Current version: $currentVersion" -ForegroundColor Yellow
 echo   Write-Host "Latest version: $latestVersion" -ForegroundColor Yellow
@@ -33,7 +35,7 @@ echo   if ^(Test-Path $tempDir^) { Remove-Item $tempDir -Recurse -Force }
 echo   New-Item -ItemType Directory -Path $tempDir -Force ^| Out-Null
 echo   $zipFile = Join-Path $tempDir "update.zip"
 echo.
-echo   Write-Host "Downloading..."
+echo   Write-Host "Downloading from: $downloadUrl"
 echo   ^(New-Object System.Net.WebClient^).DownloadFile^($downloadUrl, $zipFile^)
 echo.
 echo   Write-Host "Extracting..."
@@ -55,7 +57,7 @@ echo       New-Item -ItemType Directory -Path $destPath -Force ^| Out-Null
 echo     } else {
 echo       $protectedFiles = @^("chrome++.ini","debloat.reg","default-apps-multi-profile.bat"^)
 echo       if ^($_.Name -in $protectedFiles -and ^(Test-Path $destPath^)^) {
-echo         Write-Host "Skipping: $($_.Name)"
+echo         Write-Host "Skipping: " $_.Name
 echo       } else {
 echo         $destFolder = Split-Path $destPath -Parent
 echo         if ^(-not ^(Test-Path $destFolder^)^) { New-Item -ItemType Directory -Path $destFolder -Force ^| Out-Null }
