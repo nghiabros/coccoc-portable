@@ -109,7 +109,7 @@ jobs:
       shell: powershell
       run: |
         try {
-          $chromePlusRelease = Invoke-RestMethod "https://api.github.com/repos/Bush2021/chrome_plus/releases/latest"
+          $chromePlusRelease = Invoke-RestMethod "https://api.github.com/repos/bibicadotnet/Chromium_SetDLL/releases/latest"
           $chromePlusVersion = $chromePlusRelease.tag_name
           echo "CHROMEPLUS_VERSION=$chromePlusVersion" >> $env:GITHUB_OUTPUT
           Write-Host "Chrome++ version: $chromePlusVersion"
