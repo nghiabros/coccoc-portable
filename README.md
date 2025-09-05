@@ -1,10 +1,10 @@
+<p align="center">
+<img src="https://img.bibica.net/UHFNKQjw.png" alt="UHFNKQjw">
+</p>
+
 # Cốc Cốc Portable Debloat 
 
 Cốc Cốc Portable Debloat được cài đặt trực tiếp từ [coccoc_en_machine.exe](https://support.coccoc.com/desktop/tai-ve-va-cai-dat-coc-coc-offline-cho-may-tinh-windows), sau đó sử dụng [Chrome++](https://github.com/Bush2021/chrome_plus) để chuyển hoàn toàn sang bản di động
-
-<p align="center">
-<img src="https://img.bibica.net/VYqhc1DL.png" alt="VYqhc1DL">
-</p>
 
 Đây là 1 sản phẩm dùng cá nhân, chắc cũng hiếm ai dùng trình duyệt Cốc Cốc, nên chỉ tạo bản stable x64 thông dụng nhất chạy trên Windows
 
