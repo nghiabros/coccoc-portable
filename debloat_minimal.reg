@@ -1,4 +1,7 @@
 Windows Registry Editor Version 5.00
+;=============================================================================
+; Phiên bản tối giản dành cho người dùng thích tùy chỉnh thủ công
+;=============================================================================
 
 ; Phục hồi về mặc định
 [-HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Coccoc]
