@@ -1,0 +1,17 @@
+Windows Registry Editor Version 5.00
+
+; Phục hồi về mặc định
+[-HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Coccoc]
+[-HKEY_CURRENT_USER\SOFTWARE\Policies\Coccoc]
+
+; Cấu hình cài đặt
+[HKEY_CURRENT_USER\SOFTWARE\Policies\CocCoc]
+
+; Cấu hình DNS bảo mật tự động (tùy chỉnh DNS Cloudflare)
+"DnsOverHttpsMode"="automatic"
+"DnsOverHttpsTemplates"="https://cloudflare-dns.com/dns-query{?dns}"
+
+; Chặn các domain từ Cốc Cốc
+[HKEY_CURRENT_USER\SOFTWARE\Policies\CocCoc\URLBlocklist]
+"1"="coccoc.com"
+"2"="qccoccocmedia.vn"
