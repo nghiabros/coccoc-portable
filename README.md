@@ -1,7 +1,6 @@
 <p align="center">
-<img src="https://img.bibica.net/UHFNKQjw.png" alt="UHFNKQjw">
+<img src="https://img.bibica.net/LdQl82XW.png" alt="UHFNKQjw">
 </p>
-
 # Cốc Cốc Portable Debloat 
 
 Cốc Cốc Portable Debloat là phiên bản trình duyệt Cốc Cốc chạy trên Windows, đã được chuyển hoàn toàn sang di động, có thể chép dữ liệu sang thiết bị khác mà không mất dữ liệu, không cần cấu hình lại các plugin, history … kèm theo đó là debloat, tắt bớt các quảng cáo, giúp giao diện Cốc Cốc sạch như Chromium nguyên bản
