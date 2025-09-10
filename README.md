@@ -1,4 +1,6 @@
-![LdQl82XW](https://img.bibica.net/LdQl82XW.png)
+<p align="center">
+<img src="https://img.bibica.net/LdQl82XW.png" alt="Fk9HGGgb">
+</p>
 
 # Cốc Cốc Portable Debloat 
 
