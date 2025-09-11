@@ -343,8 +343,8 @@ border-radius: 50% !important;
 <script>
   Artalk.init({
     el:        '#Comments',
-   pageKey:   '<?= addslashes(get_permalink()) ?>',
-   pageTitle: '<?= addslashes(get_the_title()) ?>',
+    pageKey: '<%= page.permalink %>',
+    pageTitle: '<%= page.title %>',
    server:    'https://comment.bibica.net',
    site:      'Cốc Cốc',
   })
