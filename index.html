@@ -257,6 +257,27 @@
                 align-items: flex-start;
                 gap: 5px;
             }
+
+/* Ẩn footer */
+.atk-list-footer {
+display: none !important;
+}
+
+/* Ẩn link website khi comment */
+input[name="link"].atk-link {
+    display: none;
+}
+
+/* Bo tròn avatar */
+.atk-comment>.atk-avatar img {
+border-radius: 50% !important;
+}
+/* Tắt hiệu ứng a href khi user điền website, hạn chế spam link rác  */
+.atk-avatar a {
+	 pointer-events: none !important;
+ cursor: default !important;
+}
+            
         }
     </style>
 </head>
@@ -312,14 +333,14 @@
                 </div>
             </div>
 
-<!-- CSS -->
+
 <link href="https://comment.bibica.net/dist/Artalk.css" rel="stylesheet">
-
-<!-- JS -->
 <script src="https://comment.bibica.net/dist/Artalk.js"></script>
+            <div class="section">
+                <h2>Bình luận</h2>
+                <div id="Comments"></div>
+            </div>
 
-<!-- Artalk -->
-<div id="Comments"></div>
 <script>
   Artalk.init({
     el:        '#Comments',
