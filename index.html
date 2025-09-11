@@ -229,6 +229,26 @@
             text-decoration: underline;
         }
 
+/* Ẩn footer */
+.atk-list-footer {
+display: none !important;
+}
+
+/* Ẩn link website khi comment */
+input[name="link"].atk-link {
+    display: none;
+}
+
+/* Bo tròn avatar */
+.atk-comment>.atk-avatar img {
+border-radius: 50% !important;
+}
+/* Tắt hiệu ứng a href khi user điền website, hạn chế spam link rác  */
+.atk-avatar a {
+	 pointer-events: none !important;
+ cursor: default !important;
+}		
+
         @media (max-width: 600px) {
             body {
                 padding: 10px;
@@ -256,28 +276,7 @@
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 5px;
-            }
-
-/* Ẩn footer */
-.atk-list-footer {
-display: none !important;
-}
-
-/* Ẩn link website khi comment */
-input[name="link"].atk-link {
-    display: none;
-}
-
-/* Bo tròn avatar */
-.atk-comment>.atk-avatar img {
-border-radius: 50% !important;
-}
-/* Tắt hiệu ứng a href khi user điền website, hạn chế spam link rác  */
-.atk-avatar a {
-	 pointer-events: none !important;
- cursor: default !important;
-}
-            
+            }  
         }
     </style>
 </head>
