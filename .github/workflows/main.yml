@@ -189,8 +189,11 @@ jobs:
     - name: Summary
       shell: powershell
       run: |
-        if ("${{ steps.check-release.outputs.RELEASE_EXISTS }}" -eq "true") {
-          Write-Host "Release exists — skipped" -ForegroundColor Yellow
+        $releaseExists = "${{ steps.check-release.outputs.RELEASE_EXISTS }}"
+        $releaseTag = "${{ steps.check-release.outputs.RELEASE_TAG }}"
+
+        if ($releaseExists -eq "true") {
+          Write-Host 'Release exists — skipped' -ForegroundColor Yellow
         } else {
-          Write-Host "Created release ${{ steps.check-release.outputs.RELEASE_TAG }}" -ForegroundColor Green
+          Write-Host "Created release $releaseTag" -ForegroundColor Green
         }
