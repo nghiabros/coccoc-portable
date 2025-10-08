@@ -2,7 +2,7 @@ name: CocCoc Portable Auto Builder (x86)
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Chạy mỗi giờ
+    - cron: '0 * * * *'  # Run every hour
   workflow_dispatch:
 
 permissions:
@@ -16,6 +16,14 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+
+    - name: Ensure GitHub CLI is available
+      shell: powershell
+      run: |
+        if (-not (Get-Command gh -ErrorAction SilentlyContinue)) {
+          Write-Host "Installing GitHub CLI..."
+          choco install gh -y
+        }
 
     - name: Download and Install CocCoc (x86)
       id: coccoc-install
@@ -40,17 +48,16 @@ jobs:
       shell: powershell
       run: |
         try {
-          $coccocPath = "C:\Program Files (x86)\CocCoc\Browser\Application\browser.exe"
+          $coccocPath = 'C:\Program Files (x86)\CocCoc\Browser\Application\browser.exe'
           if (-not (Test-Path $coccocPath)) {
             Write-Error "CocCoc not found at expected location"
             exit 1
           }
 
           $coccocVersion = (Get-Item $coccocPath).VersionInfo.ProductVersion
-          echo "COCCOC_VERSION=$coccocVersion" >> $env:GITHUB_OUTPUT
+          "COCCOC_VERSION=$coccocVersion" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
           Write-Host "CocCoc version: $coccocVersion"
 
-          # Remove unnecessary directories
           $base = "C:\Program Files (x86)\CocCoc\Browser\Application\$coccocVersion"
           $pathsToRemove = @(
             "$base\Installer",
@@ -61,13 +68,12 @@ jobs:
           )
 
           foreach ($item in $pathsToRemove) {
-            if (Test-Path $item) {
+            if ($item -and (Test-Path $item)) {
               Remove-Item $item -Recurse -Force -ErrorAction SilentlyContinue
               Write-Host "Removed: $item"
             }
           }
 
-          # Clean Extensions folder
           $extensionsPath = "$base\Extensions"
           if (Test-Path $extensionsPath) {
             $keep = @("jdfkmiabjpfjacifcmihfdjhpnjpiick.json", "savior.crx")
@@ -90,7 +96,7 @@ jobs:
         try {
           $release = Invoke-RestMethod "https://api.github.com/repos/bibicadotnet/Chromium_SetDLL/releases/latest"
           $ver = $release.tag_name
-          echo "CHROMEPLUS_VERSION=$ver" >> $env:GITHUB_OUTPUT
+          "CHROMEPLUS_VERSION=$ver" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
           Write-Host "Chrome++ version: $ver"
         } catch {
           Write-Error "Failed to get Chrome++ version: $($_.Exception.Message)"
@@ -102,18 +108,18 @@ jobs:
       shell: powershell
       run: |
         $tag = "coccoc-portable-x86_${{ steps.coccoc-version.outputs.COCCOC_VERSION }}_${{ steps.chromeplus-version.outputs.CHROMEPLUS_VERSION }}"
-        echo "RELEASE_TAG=$tag" >> $env:GITHUB_OUTPUT
+        "RELEASE_TAG=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
 
         try {
           $headers = @{
-            'Authorization' = 'token ${{ secrets.GITHUB_TOKEN }}'
+            'Authorization' = "token ${{ secrets.GITHUB_TOKEN }}"
             'Accept' = 'application/vnd.github.v3+json'
           }
           $res = Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/releases/tags/$tag" -Headers $headers -ErrorAction Stop
-          echo "RELEASE_EXISTS=true" >> $env:GITHUB_OUTPUT
+          "RELEASE_EXISTS=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
         } catch {
           if ($_.Exception.Response.StatusCode -eq 404) {
-            echo "RELEASE_EXISTS=false" >> $env:GITHUB_OUTPUT
+            "RELEASE_EXISTS=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
           } else {
             Write-Error "Error checking release: $($_.Exception.Message)"
             exit 1
@@ -130,7 +136,7 @@ jobs:
         $root = "$env:GITHUB_WORKSPACE\CocCoc_Portable"
         $portable = "$root\CocCoc"
         $temp = "$env:TEMP\CocCocBuilder"
-        $app = "C:\Program Files (x86)\CocCoc\Browser\Application"
+        $app = 'C:\Program Files (x86)\CocCoc\Browser\Application'
 
         if (Test-Path $temp) { Remove-Item $temp -Recurse -Force }
         New-Item -ItemType Directory -Path $temp -Force | Out-Null
@@ -164,7 +170,7 @@ jobs:
         $tag = "${{ steps.check-release.outputs.RELEASE_TAG }}"
         $zip = "$env:GITHUB_WORKSPACE\$tag.zip"
         Compress-Archive -Path "$env:GITHUB_WORKSPACE\CocCoc_Portable" -DestinationPath $zip -CompressionLevel Optimal
-        echo "ARCHIVE_PATH=$zip" >> $env:GITHUB_OUTPUT
+        "ARCHIVE_PATH=$zip" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
 
     - name: Create Release and Upload Asset
       if: steps.check-release.outputs.RELEASE_EXISTS == 'false'
