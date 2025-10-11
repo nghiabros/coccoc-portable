@@ -162,15 +162,27 @@ jobs:
         Remove-Item "$app\setdll-x86.exe","$app\browser.exe~" -Force -ErrorAction SilentlyContinue
         Remove-Item "$portable\setdll-x86.exe","$portable\browser.exe~" -Force -ErrorAction SilentlyContinue
 
-    - name: Create ZIP archive
-      if: steps.check-release.outputs.RELEASE_EXISTS == 'false'
-      shell: powershell
+        - name: Create archive
       id: create-archive
+      shell: powershell
       run: |
-        $tag = "${{ steps.check-release.outputs.RELEASE_TAG }}"
-        $zip = "$env:GITHUB_WORKSPACE\$tag.zip"
-        Compress-Archive -Path "$env:GITHUB_WORKSPACE\CocCoc_Portable" -DestinationPath $zip -CompressionLevel Optimal
-        "ARCHIVE_PATH=$zip" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        $chromeplusVersion = "${{ steps.chromeplus-version.outputs.CHROMEPLUS_VERSION }}"
+        $archivePath = "${{ github.workspace }}\chromeplus-portable-$chromeplusVersion.zip"
+        
+        # Create array of files/folders to include
+        $items = @(
+          ".\dist\*",
+          ".\chrome+.ini",
+          ".\debloat.reg",
+          ".\update.bat",
+          ".\default-apps-multi-profile.bat"
+        )
+
+        # Compress all items into one archive
+        Compress-Archive -Path $items -DestinationPath $archivePath -Force
+
+        # Output result path for later steps
+        "ARCHIVE_PATH=$archivePath" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
 
     - name: Create Release and Upload Asset
       if: steps.check-release.outputs.RELEASE_EXISTS == 'false'
