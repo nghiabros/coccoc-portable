@@ -1,8 +1,8 @@
-name: Build ChromePlus Portable
+name: Build ChromePlus Portable (CocCoc x86)
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Runs every hour
+    - cron: '0 0 * * *'  # Runs once a day at 00:00 UTC
   workflow_dispatch:
 
 jobs:
@@ -13,13 +13,39 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Download and Install CocCoc (x86)
+        id: coccoc-install
+        shell: powershell
+        run: |
+          try {
+            $coccocUrl = "https://files.coccoc.com/browser/coccoc_standalone_en.exe"
+            $installer = "$env:TEMP\coccoc_standalone_en.exe"
+            Write-Host "Downloading CocCoc (x86)..." -ForegroundColor Yellow
+            (New-Object System.Net.WebClient).DownloadFile($coccocUrl, $installer)
+            Write-Host "Installing CocCoc..." -ForegroundColor Yellow
+            Start-Process -FilePath $installer -ArgumentList "/silent /install" -Wait
+          } catch {
+            Write-Error "Failed to download or install CocCoc: $($_.Exception.Message)"
+            exit 1
+          }
+
       - name: Get CocCoc version
         id: coccoc-version
         shell: powershell
         run: |
-          $app = 'C:\Program Files (x86)\CocCoc\Browser\Application'
-          $ver = (Get-ChildItem $app -Directory | Sort-Object Name -Descending | Select-Object -First 1).Name
-          "COCCOC_VERSION=$ver" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          try {
+            $app = 'C:\Program Files (x86)\CocCoc\Browser\Application'
+            if (-not (Test-Path $app)) {
+              Write-Error "CocCoc not found at $app"
+              exit 1
+            }
+            $ver = (Get-ChildItem $app -Directory | Sort-Object Name -Descending | Select-Object -First 1).Name
+            Write-Host "Detected CocCoc version: $ver"
+            "COCCOC_VERSION=$ver" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          } catch {
+            Write-Error "Failed to get CocCoc version: $($_.Exception.Message)"
+            exit 1
+          }
 
       - name: Get ChromePlus version
         id: chromeplus-version
@@ -27,6 +53,7 @@ jobs:
         run: |
           $version = Get-Content -Path '.\chromeplus-version.txt' -Raw
           "CHROMEPLUS_VERSION=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          Write-Host "Using ChromePlus version: $version"
 
       - name: Check if release exists
         id: check-release
@@ -40,6 +67,7 @@ jobs:
           $url = "https://api.github.com/repos/${{ github.repository }}/releases/tags/$tag"
           $response = Invoke-WebRequest -Uri $url -Headers $headers -Method GET -ErrorAction SilentlyContinue
           if ($response.StatusCode -eq 200) {
+            Write-Host "Release already exists for tag: $tag"
             "RELEASE_EXISTS=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
             "RELEASE_TAG=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
           } else {
@@ -62,7 +90,8 @@ jobs:
           $src = "$app\$ver"
           $dest = ".\dist"
           if (Test-Path $dest) { Remove-Item $dest -Recurse -Force }
-          Copy-Item $src $dest -Recurse
+          Copy-Item $src $dest -Recurse -Force
+          Write-Host "Copied CocCoc files to dist folder"
 
       - name: Create archive
         id: create-archive
@@ -81,14 +110,20 @@ jobs:
 
           Compress-Archive -Path $items -DestinationPath $archivePath -Force
           "ARCHIVE_PATH=$archivePath" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          Write-Host "Archive created at: $archivePath"
 
-      - name: Verify archive contents
+      - name: Verify and clean up
         shell: powershell
         run: |
           $archivePath = "${{ steps.create-archive.outputs.ARCHIVE_PATH }}"
-          Write-Host "Checking contents of $archivePath" -ForegroundColor Cyan
-          Expand-Archive -Path $archivePath -DestinationPath .\check-temp -Force
-          Get-ChildItem .\check-temp -Recurse
+          $verifyDir = ".\check-temp"
+          Write-Host "Verifying archive contents..." -ForegroundColor Cyan
+          if (Test-Path $verifyDir) { Remove-Item $verifyDir -Recurse -Force }
+          Expand-Archive -Path $archivePath -DestinationPath $verifyDir -Force
+          Get-ChildItem $verifyDir -Recurse
+          Remove-Item $verifyDir -Recurse -Force
+          if (Test-Path ".\dist") { Remove-Item ".\dist" -Recurse -Force }
+          Write-Host "Clean-up completed." -ForegroundColor DarkGreen
 
       - name: Create GitHub release
         shell: powershell
@@ -96,6 +131,7 @@ jobs:
           $tag = "${{ steps.check-release.outputs.RELEASE_TAG }}"
           $archivePath = "${{ steps.create-archive.outputs.ARCHIVE_PATH }}"
           gh release create $tag $archivePath --repo "${{ github.repository }}" --title $tag --notes "Automatic build of CocCoc Portable"
+          Write-Host "Release created successfully: $tag"
 
       - name: Summary
         shell: powershell
