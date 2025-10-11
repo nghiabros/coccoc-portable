@@ -1,146 +1,160 @@
-name: Build ChromePlus Portable (CocCoc x86)
+name: CocCoc Portable Auto Builder (x86)
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Runs once a day at 00:00 UTC
+    - cron: '0 * * * *'  # Runs every hour
   workflow_dispatch:
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
-  build:
+  check-and-build:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Download and Install CocCoc (x86)
-        id: coccoc-install
-        shell: powershell
-        run: |
-          try {
-            $coccocUrl = "https://files.coccoc.com/browser/coccoc_standalone_en.exe"
-            $installer = "$env:TEMP\coccoc_standalone_en.exe"
-            Write-Host "Downloading CocCoc (x86)..." -ForegroundColor Yellow
-            (New-Object System.Net.WebClient).DownloadFile($coccocUrl, $installer)
-            Write-Host "Installing CocCoc..." -ForegroundColor Yellow
-            Start-Process -FilePath $installer -ArgumentList "/silent /install" -Wait
-          } catch {
-            Write-Error "Failed to download or install CocCoc: $($_.Exception.Message)"
+    - name: Download and Install CocCoc (x86)
+      id: coccoc-install
+      shell: powershell
+      run: |
+        try {
+          $coccocUrl = "https://files.coccoc.com/browser/coccoc_standalone_en.exe"
+          $installer = "$env:TEMP\coccoc_standalone_en.exe"
+          Write-Host "Downloading CocCoc..." -ForegroundColor Yellow
+          (New-Object System.Net.WebClient).DownloadFile($coccocUrl, $installer)
+          Write-Host "Installing CocCoc..." -ForegroundColor Yellow
+          Start-Process -FilePath $installer -ArgumentList "/silent /install" -Wait
+        } catch {
+          Write-Error "Failed to install CocCoc: $($_.Exception.Message)"
+          exit 1
+        }
+
+    - name: Get CocCoc version
+      id: coccoc-version
+      shell: powershell
+      run: |
+        try {
+          $coccocPath = "C:\Program Files (x86)\CocCoc\Browser\Application\browser.exe"
+          if (-not (Test-Path $coccocPath)) {
+            Write-Error "CocCoc not found at expected location"
             exit 1
           }
 
-      - name: Get CocCoc version
-        id: coccoc-version
-        shell: powershell
-        run: |
-          try {
-            $app = 'C:\Program Files (x86)\CocCoc\Browser\Application'
-            if (-not (Test-Path $app)) {
-              Write-Error "CocCoc not found at $app"
-              exit 1
-            }
-            $ver = (Get-ChildItem $app -Directory | Sort-Object Name -Descending | Select-Object -First 1).Name
-            Write-Host "Detected CocCoc version: $ver"
-            "COCCOC_VERSION=$ver" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-          } catch {
-            Write-Error "Failed to get CocCoc version: $($_.Exception.Message)"
-            exit 1
-          }
+          $coccocVersion = (Get-Item $coccocPath).VersionInfo.ProductVersion
+          "COCCOC_VERSION=$coccocVersion" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          Write-Host "CocCoc version: $coccocVersion"
+        } catch {
+          Write-Error "Failed to get CocCoc version: $($_.Exception.Message)"
+          exit 1
+        }
 
-      - name: Get ChromePlus version
-        id: chromeplus-version
-        shell: powershell
-        run: |
-          $version = Get-Content -Path '.\chromeplus-version.txt' -Raw
-          "CHROMEPLUS_VERSION=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-          Write-Host "Using ChromePlus version: $version"
+    - name: Get ChromePlus version (auto)
+      id: chromeplus-version
+      shell: powershell
+      run: |
+        # Auto-generate version using current date/time
+        $version = (Get-Date -Format "yyyy.MM.dd.HHmm")
+        "CHROMEPLUS_VERSION=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        Write-Host "Auto-generated ChromePlus version: $version"
 
-      - name: Check if release exists
-        id: check-release
-        shell: powershell
-        run: |
-          $tag = "coccoc-portable-x86_${{ steps.coccoc-version.outputs.COCCOC_VERSION }}_${{ steps.chromeplus-version.outputs.CHROMEPLUS_VERSION }}"
+    - name: Check if release exists
+      id: check-release
+      shell: powershell
+      run: |
+        $tag = "coccoc-portable-x86_${{ steps.coccoc-version.outputs.COCCOC_VERSION }}_${{ steps.chromeplus-version.outputs.CHROMEPLUS_VERSION }}"
+        "RELEASE_TAG=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+        try {
           $headers = @{
-            'Authorization' = "token ${{ secrets.GITHUB_TOKEN }}"
+            'Authorization' = 'token ${{ secrets.GITHUB_TOKEN }}'
             'Accept' = 'application/vnd.github.v3+json'
           }
-          $url = "https://api.github.com/repos/${{ github.repository }}/releases/tags/$tag"
-          $response = Invoke-WebRequest -Uri $url -Headers $headers -Method GET -ErrorAction SilentlyContinue
-          if ($response.StatusCode -eq 200) {
-            Write-Host "Release already exists for tag: $tag"
-            "RELEASE_EXISTS=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-            "RELEASE_TAG=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-          } else {
+          $res = Invoke-RestMethod -Uri "https://api.github.com/repos/${{ github.repository }}/releases/tags/$tag" -Headers $headers -ErrorAction Stop
+          "RELEASE_EXISTS=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+        } catch {
+          if ($_.Exception.Response.StatusCode -eq 404) {
             "RELEASE_EXISTS=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-            "RELEASE_TAG=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-          }
-
-      - name: Exit if release exists
-        if: steps.check-release.outputs.RELEASE_EXISTS == 'true'
-        shell: powershell
-        run: |
-          Write-Host 'Release already exists — skipping build' -ForegroundColor Yellow
-          exit 0
-
-      - name: Prepare portable package
-        shell: powershell
-        run: |
-          $app = 'C:\Program Files (x86)\CocCoc\Browser\Application'
-          $ver = '${{ steps.coccoc-version.outputs.COCCOC_VERSION }}'
-          $src = "$app\$ver"
-          $dest = ".\dist"
-          if (Test-Path $dest) { Remove-Item $dest -Recurse -Force }
-          Copy-Item $src $dest -Recurse -Force
-          Write-Host "Copied CocCoc files to dist folder"
-
-      - name: Create archive
-        id: create-archive
-        shell: powershell
-        run: |
-          $chromeplusVersion = "${{ steps.chromeplus-version.outputs.CHROMEPLUS_VERSION }}"
-          $archivePath = "${{ github.workspace }}\chromeplus-portable-$chromeplusVersion.zip"
-          
-          $items = @(
-            ".\dist\*",
-            ".\chrome+.ini",
-            ".\debloat.reg",
-            ".\update.bat",
-            ".\default-apps-multi-profile.bat"
-          )
-
-          Compress-Archive -Path $items -DestinationPath $archivePath -Force
-          "ARCHIVE_PATH=$archivePath" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-          Write-Host "Archive created at: $archivePath"
-
-      - name: Verify and clean up
-        shell: powershell
-        run: |
-          $archivePath = "${{ steps.create-archive.outputs.ARCHIVE_PATH }}"
-          $verifyDir = ".\check-temp"
-          Write-Host "Verifying archive contents..." -ForegroundColor Cyan
-          if (Test-Path $verifyDir) { Remove-Item $verifyDir -Recurse -Force }
-          Expand-Archive -Path $archivePath -DestinationPath $verifyDir -Force
-          Get-ChildItem $verifyDir -Recurse
-          Remove-Item $verifyDir -Recurse -Force
-          if (Test-Path ".\dist") { Remove-Item ".\dist" -Recurse -Force }
-          Write-Host "Clean-up completed." -ForegroundColor DarkGreen
-
-      - name: Create GitHub release
-        shell: powershell
-        run: |
-          $tag = "${{ steps.check-release.outputs.RELEASE_TAG }}"
-          $archivePath = "${{ steps.create-archive.outputs.ARCHIVE_PATH }}"
-          gh release create $tag $archivePath --repo "${{ github.repository }}" --title $tag --notes "Automatic build of CocCoc Portable"
-          Write-Host "Release created successfully: $tag"
-
-      - name: Summary
-        shell: powershell
-        run: |
-          $releaseExists = "${{ steps.check-release.outputs.RELEASE_EXISTS }}"
-          $releaseTag = "${{ steps.check-release.outputs.RELEASE_TAG }}"
-
-          if ($releaseExists -eq "true") {
-            Write-Host 'Release exists — skipped' -ForegroundColor Yellow
           } else {
-            Write-Host "Created release $releaseTag" -ForegroundColor Green
+            Write-Error "Error checking release: $($_.Exception.Message)"
+            exit 1
           }
+        }
+
+    - name: Build CocCoc Portable (x86)
+      if: steps.check-release.outputs.RELEASE_EXISTS == 'false'
+      shell: powershell
+      run: |
+        Stop-Process -Name browser,coccoc -Force -ErrorAction SilentlyContinue
+
+        $releaseTag = "${{ steps.check-release.outputs.RELEASE_TAG }}"
+        $root = "$env:GITHUB_WORKSPACE\CocCoc_Portable"
+        $portable = "$root\CocCoc"
+        $temp = "$env:TEMP\CocCocBuilder"
+        $app = "C:\Program Files (x86)\CocCoc\Browser\Application"
+
+        if (Test-Path $temp) { Remove-Item $temp -Recurse -Force }
+        New-Item -ItemType Directory -Path $temp -Force | Out-Null
+        if (Test-Path $root) { Remove-Item $root -Recurse -Force }
+        New-Item -ItemType Directory -Path $portable -Force | Out-Null
+
+        $rel = Invoke-RestMethod "https://api.github.com/repos/bibicadotnet/Chromium_SetDLL/releases/latest"
+        $url = $rel.assets | Where-Object { $_.name -eq "setdll.7z" } | Select-Object -First 1 -ExpandProperty browser_download_url
+        (New-Object System.Net.WebClient).DownloadFile($url, "$temp\setdll.7z")
+        (New-Object System.Net.WebClient).DownloadFile("https://www.7-zip.org/a/7zr.exe", "$temp\7zr.exe")
+
+        & "$temp\7zr.exe" x "$temp\setdll.7z" "-o$temp\chromeplus" -y | Out-Null
+
+        Copy-Item "$temp\chromeplus\setdll-x86.exe" "$app\setdll-x86.exe" -Force
+        Copy-Item "$temp\chromeplus\version-x86.dll" "$app\version.dll" -Force
+
+        Push-Location $app
+        & ".\setdll-x86.exe" /d:version.dll browser.exe | Out-Null
+        Pop-Location
+
+        Copy-Item "$app\*" $portable -Recurse -Force
+        Remove-Item $temp -Recurse -Force
+        Remove-Item "$app\setdll-x86.exe","$app\browser.exe~" -Force -ErrorAction SilentlyContinue
+        Remove-Item "$portable\setdll-x86.exe","$portable\browser.exe~" -Force -ErrorAction SilentlyContinue
+
+        # Add extra files
+        Copy-Item "$env:GITHUB_WORKSPACE\chrome+.ini" $portable -Force -ErrorAction SilentlyContinue
+        Copy-Item "$env:GITHUB_WORKSPACE\debloat.reg" $portable -Force -ErrorAction SilentlyContinue
+        Copy-Item "$env:GITHUB_WORKSPACE\update.bat" $portable -Force -ErrorAction SilentlyContinue
+        Copy-Item "$env:GITHUB_WORKSPACE\default-apps-multi-profile.bat" $portable -Force -ErrorAction SilentlyContinue
+
+    - name: Create ZIP archive
+      if: steps.check-release.outputs.RELEASE_EXISTS == 'false'
+      shell: powershell
+      id: create-archive
+      run: |
+        $tag = "${{ steps.check-release.outputs.RELEASE_TAG }}"
+        $zip = "$env:GITHUB_WORKSPACE\$tag.zip"
+        Compress-Archive -Path "$env:GITHUB_WORKSPACE\CocCoc_Portable" -DestinationPath $zip -CompressionLevel Optimal
+        "ARCHIVE_PATH=$zip" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+    - name: Create Release and Upload Asset
+      if: steps.check-release.outputs.RELEASE_EXISTS == 'false'
+      shell: powershell
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        $tag = "${{ steps.check-release.outputs.RELEASE_TAG }}"
+        $ver1 = "${{ steps.coccoc-version.outputs.COCCOC_VERSION }}"
+        $ver2 = "${{ steps.chromeplus-version.outputs.CHROMEPLUS_VERSION }}"
+        $zip = "${{ steps.create-archive.outputs.ARCHIVE_PATH }}"
+
+        $body = "**CocCoc Portable (x86) with Chrome++**`n`n**CocCoc Version:** $ver1`n**Chrome++ Version:** $ver2`n`nAuto-built via GitHub Actions."
+        gh release create $tag --title $tag --notes $body --repo ${{ github.repository }} $zip
+
+    - name: Summary
+      shell: powershell
+      run: |
+        if ("${{ steps.check-release.outputs.RELEASE_EXISTS }}" -eq "true") {
+          Write-Host "Release exists — skipped" -ForegroundColor Yellow
+        } else {
+          Write-Host "Created release ${{ steps.check-release.outputs.RELEASE_TAG }}" -ForegroundColor Green
+        }
